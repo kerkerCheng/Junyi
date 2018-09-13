@@ -39,3 +39,52 @@ def get_dict():
         it += 1
 
     return rate
+
+
+def get_ok_users_list(threshold):
+    dic = np.load('dict_users_to_unique_num_sec.npy').item()
+    ans = []
+    for key, value in dic.items():
+        if value > threshold:
+            ans.append(key)
+
+    return ans
+
+
+def get_new_df(main_df, user_list):
+    main_df_val = main_df.value
+    mask = np.zeros(main_df_val.shape[0], dtype=bool)
+
+    for i in range(main_df_val.shape[0]):
+        if main_df_val[i][0] in user_list:
+            mask[i] = True
+
+    new_df_val = main_df_val[mask, :]
+    new_df = pd.DataFrame(new_df_val)
+
+    return new_df
+
+
+def get_rate_dic(ok_user_list, ok_val):
+    sec_list = np.load('section_list.npy').tolist()
+    count = {}
+    rate = {}
+
+    for i in range(len(ok_user_list)):
+        count[ok_user_list[i]] = np.zeros(338)
+        rate[ok_user_list[i]] = np.zeros(338)
+
+    for i in range(ok_val.shape[0]):
+        user_this = ok_val[i][0]
+        sec_this = ok_val[i][2]
+        (count[user_this])[sec_list.index(sec_this)] += 1
+
+        if ok_val[i][5] is True:
+            (rate[user_this])[sec_list.index(sec_this)] += 1
+
+    for key, value in rate.items():
+        for i in range(338):
+            if (count[key])[i] != 0:
+                value[i] /= (count[key])[i]
+
+    return rate
