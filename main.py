@@ -9,21 +9,22 @@ num_sec = 338
 df_main = pd.read_csv('hash_junyi_section_learning_data.csv')
 df_val = df_main.values
 
-ok_user_list = np.load('morethan100_section_userslist.npy').tolist()
-all_user_list = np.load('all_user_list.npy').tolist()
-sec_list = np.load('section_list.npy').tolist()
+grade_sec = []
+f = open('first_grade_sec.txt', 'r', encoding='utf-8')
+for line in f:
+    grade_sec.append(line.strip(' \n'))
 
-ok_df = pd.read_csv('more_than_100_sec_users.csv')
-ok_df = ok_df.sort_values(['user_primary_key', 'section_title'], ascending=[True, False])
-ok_val = ok_df.values
+first_grade_ok_user_list = src.get_grade_ok_users_list(grade_sec, 13)
+grade_ok_rate_dict = src.get_grade_ok_rate_dict(first_grade_ok_user_list)
+grade_ok_rate_dict = src.mask_grade_ok_rate_dict(grade_sec, grade_ok_rate_dict)
 
-rate = np.load('ok_user_rate_mapping.npy').item()
-tensor = np.zeros((len(ok_user_list), 338, 338))
+tensor = np.zeros((len(first_grade_ok_user_list), 13, 13))
 
 k = 0
-for key, value in rate.items():
-    for i in range(338):
-        for j in range(338):
+for key, value in grade_ok_rate_dict.items():
+    for i in range(13):
+        for j in range(13):
             tensor[k][i][j] = (value[i]*value[j])**0.5
     k += 1
 
+# tensor = np.load('tensor.npy')
