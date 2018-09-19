@@ -14,7 +14,7 @@ f = open('first_grade_sec.txt', 'r', encoding='utf-8')
 for line in f:
     grade_sec.append(line.strip(' \n'))
 
-first_grade_ok_user_list = src.get_grade_ok_users_list(grade_sec, 13)
+first_grade_ok_user_list = src.get_grade_ok_users_list(grade_sec, 8, 8)
 grade_ok_rate_dict = src.get_grade_ok_rate_dict(first_grade_ok_user_list)
 grade_ok_rate_dict = src.mask_grade_ok_rate_dict(grade_sec, grade_ok_rate_dict)
 
@@ -27,4 +27,4 @@ for key, value in grade_ok_rate_dict.items():
             tensor[k][i][j] = (value[i]*value[j])**0.5
     k += 1
 
-# tensor = np.load('tensor.npy')
+so.savemat('first_grade_ok_tensor', dict(tensor=tensor))

@@ -31,8 +31,12 @@ def get_all_rate_dict():
         print(it)
         for i in range(len(value)):
             if time[key][i] != 0:
-                value[i] /= time[key][i]
+                rate[key][i] /= time[key][i]
+            elif time[key][i] == 0:
+                rate[key][i] = -1
         it += 1
+
+    np.save('all_user_rate_dict.npy', rate)
 
     return rate
 
@@ -47,7 +51,7 @@ def get_ok_users_list(threshold):
     return ans
 
 
-def get_grade_ok_users_list(grade_list, threshold):
+def get_grade_ok_users_list(grade_list, lowerbond, upperbond):
     user_times_dict = np.load('user_section_times_dict.npy').item()
     sec_list = np.load('section_list.npy').tolist()
     ans_list = []
@@ -61,7 +65,7 @@ def get_grade_ok_users_list(grade_list, threshold):
     for key, item in user_times_dict.items():
         tmp = item[mask]
         times = np.count_nonzero(tmp)
-        if times >= threshold:
+        if lowerbond <= times <= upperbond:
             ans_list.append(key)
 
     return ans_list
