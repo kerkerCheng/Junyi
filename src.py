@@ -33,7 +33,7 @@ def get_all_rate_dict():
             if time[key][i] != 0:
                 rate[key][i] /= time[key][i]
             elif time[key][i] == 0:
-                rate[key][i] = -1
+                rate[key][i] = 0
         it += 1
 
     np.save('all_user_rate_dict.npy', rate)
